@@ -1,27 +1,21 @@
+from contextlib import asynccontextmanager
 import uvicorn
-from fastapi import FastAPI, Path
-from typing import Annotated
-
-from users.routes import router as users_router
-
-app = FastAPI()
-app.include_router(users_router)
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World!!"}
+from fastapi import FastAPI
+from core.models import Base, db_helper
+from api_v1 import router as api_v1_router
+from core.config import settings
 
 
-@app.get("/hello")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with db_helper.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
 
 
-@app.get("/item/{item_id}")
-async def say_hello(item_id: Annotated[int, Path(ge=0, lt=100000000)]):
-    return {"item" : {
-        "id": item_id,
-    }}
+app = FastAPI(lifespan=lifespan)
+app.include_router(api_v1_router, prefix=settings.api_v1_prefix)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
