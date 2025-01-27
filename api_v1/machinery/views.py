@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status, WebSocket
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.models import db_helper, Machinery, MachineryComment
-from .dependecies import machinery_by_id, comment_by_id
+from core.models import db_helper, Machinery, MachineryComment, MachineryTask
+from .dependecies import machinery_by_id, comment_by_id, task_by_id
 from .machinery_ws import router as ws_router
+from fastapi.responses import JSONResponse
 from . import crud
 from .schemas import (
     MachinerySchema,
@@ -13,6 +14,9 @@ from .schemas import (
     MachineryCommentCreateSchema,
     MachineryCommentUpdateSchema,
     DocsCreateSchema,
+    TaskCreateSchema,
+    TaskSchema,
+    TaskUpdateSchema,
 )
 
 router = APIRouter(tags=["Machinery"])
@@ -46,7 +50,7 @@ async def get_machinery_by_id(
 
 @router.put("/{machinery_id}/", response_model=MachinerySchema)
 async def update_machinery(
-    machinery_update: MachineryUpdateSchema,
+    machinery_update: MachineryCompleteSchema,
     machinery: Machinery = Depends(machinery_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
@@ -102,3 +106,25 @@ async def create_doc(
     print("Новый документ")
     print(doc_in)
     return await crud.create_doc(session=session, doc_in=doc_in)
+
+
+@router.post("/tasks/", response_model=TaskSchema)
+async def create_task(
+    task_in: TaskCreateSchema,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+
+    return await crud.create_task(session=session, task_in=task_in)
+
+
+@router.put("/tasks/{task_id}/", response_model=TaskSchema)
+async def update_task(
+    task_update: TaskUpdateSchema,
+    task: MachineryTask = Depends(task_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await crud.update_task(
+        session=session,
+        task=task,
+        task_update=task_update,
+    )

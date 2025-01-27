@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from .machinery_comment import MachineryComment
     from .machinery_docs import MachineryDocs
-    from .tasks import Task
+    from .machinery_tasks import MachineryTask
 
 
 class Machinery(Base):
@@ -48,14 +48,14 @@ class Machinery(Base):
     comments: Mapped[List["MachineryComment"]] = relationship(
         "MachineryComment",
         back_populates="machinery",
-        lazy="selectin",  # Указываем способ загрузки
+        lazy="selectin",
     )
     docs: Mapped[List["MachineryDocs"]] = relationship(
         "MachineryDocs",
         back_populates="machinery",
-        lazy="selectin",  # Указываем способ загрузки
+        lazy="selectin",
     )
 
-    tasks: Mapped[List["Task"]] = relationship(
-        "Task", back_populates="machinery", lazy="selectin"
+    tasks: Mapped[List["MachineryTask"]] = relationship(
+        "MachineryTask", back_populates="machinery", lazy="selectin"
     )

@@ -1,12 +1,9 @@
 from contextlib import asynccontextmanager
 import uvicorn
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI
 from api_v1 import router as api_v1_router
-from core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
 from api_v1.users.views import router as auth_router
-from api_v1.tasks.views import router as tasks_router
 
 
 @asynccontextmanager
@@ -25,7 +22,6 @@ app.add_middleware(
 
 app.include_router(api_v1_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1/auth")
-app.include_router(tasks_router, prefix="/api/v1/tasks")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

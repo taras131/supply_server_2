@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.engine import Result
-from sqlalchemy.orm import joinedload, selectinload
-from core.models import Machinery, MachineryComment, MachineryDocs
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from sqlalchemy.orm import selectinload
+from core.models import Machinery, MachineryComment, MachineryDocs, MachineryTask
+from fastapi import HTTPException
 from .schemas import (
     MachinerySchema,
     MachineryCommentSchema,
@@ -12,6 +12,9 @@ from .schemas import (
     MachineryCommentCreateSchema,
     MachineryCommentUpdateSchema,
     DocsCreateSchema,
+    MachineryCompleteSchema,
+    TaskCreateSchema,
+    TaskUpdateSchema,
 )
 
 
@@ -90,7 +93,7 @@ async def create_machinery(
 async def update_machinery(
     session: AsyncSession,
     machinery: Machinery,
-    machinery_update: MachineryUpdateSchema,
+    machinery_update: MachineryCompleteSchema,
 ) -> Machinery:
     for name, value in machinery_update.model_dump().items():
         if name == "comments":
@@ -171,3 +174,47 @@ async def create_doc(
     await session.commit()
     await session.refresh(doc)
     return doc
+
+
+async def get_task_by_id(
+    session: AsyncSession,
+    task_id: int,
+) -> MachineryTask | None:
+    # Создаем запрос с предварительной загрузкой всех связанных данных
+    stmt = select(MachineryTask).where(MachineryTask.id == task_id)
+    try:
+        result = await session.execute(stmt)
+        task = result.scalar_one_or_none()
+        if task is None:
+            return None
+        return task
+    except Exception as e:
+        print(f"Error fetching machinery: {str(e)}")
+        raise
+
+
+async def create_task(
+    session: AsyncSession,
+    task_in: TaskCreateSchema,
+) -> MachineryTask:
+    try:
+        task = MachineryTask(**task_in.model_dump())
+        session.add(task)
+        await session.commit()
+        await session.refresh(task)
+        return task
+    except Exception as e:
+        print(f"Error creating task: {e}")
+        raise e
+
+
+async def update_task(
+    session: AsyncSession,
+    task: MachineryTask,
+    task_update: TaskUpdateSchema,
+) -> MachineryTask:
+    for name, value in task_update.model_dump().items():
+        setattr(task, name, value)
+    await session.commit()
+    await session.refresh(task)
+    return task

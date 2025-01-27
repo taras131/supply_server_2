@@ -6,8 +6,8 @@ from typing import Optional, List
 from . import Machinery
 
 
-class Task(Base):
-    __tablename__ = "tasks"
+class MachineryTask(Base):
+    __tablename__ = "machinery_tasks"
 
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(1024))
@@ -20,10 +20,8 @@ class Task(Base):
     spent_resources: Mapped[str] = mapped_column(String(1024), default="")
     author_id: Mapped[int]
     assigned_to_id: Mapped[int]
-    machinery_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("machinery.id"), nullable=True
-    )
-    machinery: Mapped[Optional["Machinery"]] = relationship(
+    machinery_id: Mapped[int] = mapped_column(ForeignKey("machinery.id"), nullable=True)
+    machinery: Mapped["Machinery"] = relationship(
         "Machinery", back_populates="tasks", lazy="selectin"
     )
 
