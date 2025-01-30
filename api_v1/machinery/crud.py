@@ -2,8 +2,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.orm import selectinload
-from core.models import Machinery, MachineryComment, MachineryDocs, MachineryTask
+from core.models import (
+    Machinery,
+    MachineryComment,
+    MachineryDocs,
+    MachineryTask,
+    MachineryProblem,
+)
 from fastapi import HTTPException
+import logging
 from .schemas import (
     MachinerySchema,
     MachineryCommentSchema,
@@ -15,6 +22,7 @@ from .schemas import (
     MachineryCompleteSchema,
     TaskCreateSchema,
     TaskUpdateSchema,
+    ProblemCreateSchema,
 )
 
 
@@ -36,10 +44,7 @@ async def get_machinery(session: AsyncSession) -> list[Machinery]:
 
 
 async def get_machinery_list(session: AsyncSession):
-    # Добавляем опцию fresh=True для получения актуальных данных
     stmt = select(Machinery).execution_options(fresh=True)
-    # Или можно использовать with_for_update() для блокировки строк
-    # stmt = select(Machinery).with_for_update()
     await session.flush()
     result = await session.execute(stmt)
     machinery_list = result.scalars().all()
@@ -50,15 +55,14 @@ async def get_machinery_by_id(
     session: AsyncSession,
     machinery_id: int,
 ) -> Machinery | None:
-    # Создаем запрос с предварительной загрузкой всех связанных данных
     stmt = (
         select(Machinery)
         .where(Machinery.id == machinery_id)
         .options(
-            selectinload(Machinery.comments),  # Загружаем комментарии
-            selectinload(Machinery.docs),  # Загружаем документы
+            selectinload(Machinery.comments),
+            selectinload(Machinery.docs),
             selectinload(Machinery.tasks),
-            # Если есть другие связанные таблицы, добавьте их здесь
+            selectinload(Machinery.problems),
         )
     )
     try:
@@ -94,33 +98,36 @@ async def update_machinery(
     session: AsyncSession,
     machinery: Machinery,
     machinery_update: MachineryCompleteSchema,
-) -> Machinery:
+) -> Machinery | None:
+    # Обновляем основные поля
     for name, value in machinery_update.model_dump().items():
-        if name == "comments":
-            updated_comments = []
-            for comment_data in value:
-                if "id" in comment_data:
-                    stmt = select(MachineryComment).where(
-                        MachineryComment.id == comment_data["id"]
-                    )
-                    result = await session.execute(stmt)
-                    try:
-                        comment = result.scalar_one()
-                        for field_name, field_value in comment_data.items():
-                            setattr(comment, field_name, field_value)
-                    except NoResultFound:
-                        raise HTTPException(status_code=404, detail="Comment not found")
-                else:
-                    comment = MachineryComment(**comment_data)
-                    comment.machinery_id = machinery.id
-                    session.add(comment)
-                updated_comments.append(comment)
-            setattr(machinery, name, updated_comments)
-        else:
+        if (
+            name != "comments"
+            and name != "docs"
+            and name != "tasks"
+            and name != "problems"
+        ):
             setattr(machinery, name, value)
 
+    # Сохраняем изменения
     await session.commit()
-    await session.refresh(machinery)
+
+    # Загружаем связанные данные после обновления
+    stmt = (
+        select(Machinery)
+        .where(Machinery.id == machinery.id)
+        .options(
+            selectinload(Machinery.comments),  # Загружаем комментарии
+            selectinload(Machinery.docs),  # Загружаем документы
+            selectinload(Machinery.tasks),  # Загружаем задачи
+            # Если есть другие связанные таблицы, добавьте их здесь
+        )
+    )
+    result = await session.execute(stmt)
+    machinery = result.scalar_one_or_none()
+    if machinery is None:
+        return None
+
     return machinery
 
 
@@ -218,3 +225,18 @@ async def update_task(
     await session.commit()
     await session.refresh(task)
     return task
+
+
+async def create_problem(
+    session: AsyncSession,
+    problem_in: ProblemCreateSchema,
+) -> MachineryProblem:
+    try:
+        problem = MachineryProblem(**problem_in.model_dump())
+        session.add(problem)
+        await session.commit()
+        await session.refresh(problem)
+        return problem
+    except Exception as e:
+        print(f"Error creating problem: {e}")
+        raise e

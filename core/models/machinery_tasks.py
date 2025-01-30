@@ -3,7 +3,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from datetime import datetime
 from typing import Optional, List
-from . import Machinery
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from . import Machinery
+    from . import MachineryProblem
 
 
 class MachineryTask(Base):
@@ -24,6 +28,12 @@ class MachineryTask(Base):
     machinery: Mapped["Machinery"] = relationship(
         "Machinery", back_populates="tasks", lazy="selectin"
     )
+    problem_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("machinery_problem.id"), nullable=True
+    )
+    problem: Mapped[Optional["MachineryProblem"]] = relationship(
+        "MachineryProblem", lazy="selectin"
+    )
 
     def to_dict(self):
         return {
@@ -33,9 +43,13 @@ class MachineryTask(Base):
             "status_id": self.status_id,
             "priority_id": self.priority_id,
             "due_date": self.due_date,
-            "machinery_id": self.machinery_id,
-            "author": self.author_id,
-            "assigned_to": self.assigned_to_id,
+            "issue_photos": self.issue_photos,
+            "result_photos": self.result_photos,
+            "result_description": self.result_description,
+            "spent_resources": self.spent_resources,
+            "author_id": self.author_id,
+            "assigned_to_id": self.assigned_to_id,
+            "problem_id": self.problem_id,
             "created_date": self.created_date,
             "updated_date": self.updated_date,
         }

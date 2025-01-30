@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from .machinery_comment import MachineryComment
     from .machinery_docs import MachineryDocs
     from .machinery_tasks import MachineryTask
+    from .machinery_problem import MachineryProblem
 
 
 class Machinery(Base):
@@ -39,10 +40,6 @@ class Machinery(Base):
             "photos": self.photos,
             "created_date": self.created_date,
             "updated_date": self.updated_date,
-            # добавьте остальные поля
-            "comments": [
-                comment.to_dict() for comment in self.comments if comment.is_active
-            ],
         }
 
     comments: Mapped[List["MachineryComment"]] = relationship(
@@ -55,7 +52,17 @@ class Machinery(Base):
         back_populates="machinery",
         lazy="selectin",
     )
-
     tasks: Mapped[List["MachineryTask"]] = relationship(
-        "MachineryTask", back_populates="machinery", lazy="selectin"
+        "MachineryTask",
+        back_populates="machinery",
+        lazy="selectin",
+        collection_class=list,
+        cascade="all, delete-orphan",
+    )
+    problems: Mapped[List["MachineryTask"]] = relationship(
+        "MachineryProblem",
+        back_populates="machinery",
+        lazy="selectin",
+        collection_class=list,
+        cascade="all, delete-orphan",
     )

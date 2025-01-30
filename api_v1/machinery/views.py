@@ -17,6 +17,8 @@ from .schemas import (
     TaskCreateSchema,
     TaskSchema,
     TaskUpdateSchema,
+    ProblemSchema,
+    ProblemCreateSchema,
 )
 
 router = APIRouter(tags=["Machinery"])
@@ -128,3 +130,11 @@ async def update_task(
         task=task,
         task_update=task_update,
     )
+
+
+@router.post("/problems/", response_model=ProblemSchema)
+async def create_problem(
+    problem_in: ProblemCreateSchema,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await crud.create_problem(session=session, problem_in=problem_in)
