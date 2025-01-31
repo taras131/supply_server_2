@@ -1,27 +1,31 @@
 from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
+from core.models import Base, db_helper
 from api_v1 import router as api_v1_router
-from fastapi.middleware.cors import CORSMiddleware
-from api_v1.users.views import router as auth_router
+from core.config import settings
+from bot.bot import start_bot
+import asyncio
+from telegram.ext import Application, CommandHandler, CallbackContext
+from telegram import Update
+
+
+async def error_handler(update: Update, context: CallbackContext):
+    # Логируем исключение
+    print("Произошла ошибка:", context.error)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    async with db_helper.engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    asyncio.create_task(start_bot())
     yield
 
 
 app = FastAPI(lifespan=lifespan)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # В реальном приложении укажите конкретные разрешённые домены
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.include_router(api_v1_router, prefix=settings.api_v1_prefix)
 
-app.include_router(api_v1_router, prefix="/api/v1")
-app.include_router(auth_router, prefix="/api/v1/auth")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)

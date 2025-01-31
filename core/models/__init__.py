@@ -5,6 +5,7 @@ from .machinery_comment import MachineryComment
 from .machinery_docs import MachineryDocs
 from .machinery_tasks import MachineryTask
 from .machinery_problem import MachineryProblem
+from .subscriber import Subscriber
 from .db_helper import DatabaseHelper, db_helper
 
 __all__ = (
@@ -17,4 +18,5 @@ __all__ = (
     "MachineryProblem",
     "DatabaseHelper",
     "db_helper",
+    "Subscriber",
 )

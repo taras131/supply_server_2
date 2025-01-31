@@ -1,8 +1,8 @@
-"""migration problem to machinery
+"""added subscribe table_2
 
-Revision ID: 7be72c38e726
+Revision ID: 5ea6dcb60876
 Revises: 
-Create Date: 2025-01-30 13:54:12.932974
+Create Date: 2025-01-31 17:47:30.093654
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "7be72c38e726"
+revision: str = "5ea6dcb60876"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -35,6 +35,16 @@ def upgrade() -> None:
         sa.Column("created_date", sa.BigInteger(), nullable=False),
         sa.Column("updated_date", sa.BigInteger(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "subscribers",
+        sa.Column("chat_id", sa.Integer(), nullable=True),
+        sa.Column("username", sa.String(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("created_date", sa.BigInteger(), nullable=False),
+        sa.Column("updated_date", sa.BigInteger(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("chat_id"),
     )
     op.create_table(
         "users",
@@ -134,5 +144,6 @@ def downgrade() -> None:
     op.drop_table("machinery_docs")
     op.drop_table("machinery_comment")
     op.drop_table("users")
+    op.drop_table("subscribers")
     op.drop_table("machinery")
     # ### end Alembic commands ###

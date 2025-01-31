@@ -8,6 +8,7 @@ from core.models import (
     MachineryDocs,
     MachineryTask,
     MachineryProblem,
+    Subscriber,
 )
 from fastapi import HTTPException
 import logging

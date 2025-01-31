@@ -3,6 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import db_helper, Machinery, MachineryComment, MachineryTask
 from .dependecies import machinery_by_id, comment_by_id, task_by_id
 from .machinery_ws import router as ws_router
+from bot.handlers import get_subscribers
+from bot.bot import send_notification
 from fastapi.responses import JSONResponse
 from . import crud
 from .schemas import (
@@ -137,4 +139,8 @@ async def create_problem(
     problem_in: ProblemCreateSchema,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    return await crud.create_problem(session=session, problem_in=problem_in)
+    problem = await crud.create_problem(session=session, problem_in=problem_in)
+    subscribers = await get_subscribers(session)
+    for subscriber in subscribers:
+        await send_notification(subscriber.chat_id, problem.to_dict())
+    return problem
