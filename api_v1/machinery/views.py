@@ -1,18 +1,17 @@
-from fastapi import APIRouter, HTTPException, Depends, status, WebSocket
+from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.models import db_helper, Machinery, MachineryComment, MachineryTask
 from .dependecies import machinery_by_id, comment_by_id, task_by_id
 from .machinery_ws import router as ws_router
-from bot.handlers import get_subscribers
-from bot.bot import send_notification
-from fastapi.responses import JSONResponse
+from api_v1.bot.crud import get_subscribers
+from api_v1.bot.bot import send_telegram_message
 from . import crud
 from .schemas import (
     MachinerySchema,
     MachineryCommentSchema,
     MachineryCreateSchema,
-    MachineryUpdateSchema,
     MachineryCompleteSchema,
+    MachineryUpdateSchema,
     MachineryCommentCreateSchema,
     MachineryCommentUpdateSchema,
     DocsCreateSchema,
@@ -52,9 +51,9 @@ async def get_machinery_by_id(
     return machinery
 
 
-@router.put("/{machinery_id}/", response_model=MachinerySchema)
+@router.put("/{machinery_id}/", response_model=MachineryCompleteSchema)
 async def update_machinery(
-    machinery_update: MachineryCompleteSchema,
+    machinery_update: MachineryUpdateSchema,
     machinery: Machinery = Depends(machinery_by_id),
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
@@ -141,6 +140,26 @@ async def create_problem(
 ):
     problem = await crud.create_problem(session=session, problem_in=problem_in)
     subscribers = await get_subscribers(session)
+    machinery = await crud.get_machinery_by_id(
+        session=session, machinery_id=problem.machinery_id
+    )
+    message_text = (
+        f"🔔 Новая проблема:\n"
+        f"Техника: {machinery.brand} {machinery.model}\n"
+        f"Гос номер: {machinery.state_number}\n"
+        f"Название: {problem.title}\n"
+        f"Описание: {problem.description}\n"
+        f"Приоритет: {problem.priority_id}\n"
+        f"ID техники: {problem.machinery_id}"
+    )
+    # Отправляем сообщение каждому активному подписчику
     for subscriber in subscribers:
-        await send_notification(subscriber.chat_id, problem.to_dict())
+        if subscriber.is_active:
+            try:
+                await send_telegram_message(
+                    chat_id=subscriber.chat_id, text=message_text
+                )
+            except Exception as e:
+                print(f"Failed to send message to {subscriber.chat_id}: {str(e)}")
+                continue
     return problem

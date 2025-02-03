@@ -163,5 +163,5 @@ class MachineryCompleteSchema(BaseModel):
     problems: List[ProblemSchema]
 
 
-class MachineryUpdateSchema(MachinerySchema):
+class MachineryUpdateSchema(MachineryCompleteSchema):
     pass

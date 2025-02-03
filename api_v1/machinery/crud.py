@@ -77,13 +77,6 @@ async def get_machinery_by_id(
         raise
 
 
-async def get_comment_by_id(
-    session: AsyncSession,
-    comment_id: int,
-) -> MachineryComment | None:
-    return await session.get(MachineryComment, comment_id)
-
-
 async def create_machinery(
     session: AsyncSession,
     machinery_in: MachineryCreateSchema,
@@ -98,7 +91,7 @@ async def create_machinery(
 async def update_machinery(
     session: AsyncSession,
     machinery: Machinery,
-    machinery_update: MachineryCompleteSchema,
+    machinery_update: MachineryUpdateSchema,
 ) -> Machinery | None:
     # Обновляем основные поля
     for name, value in machinery_update.model_dump().items():
@@ -114,22 +107,21 @@ async def update_machinery(
     await session.commit()
 
     # Загружаем связанные данные после обновления
-    stmt = (
-        select(Machinery)
-        .where(Machinery.id == machinery.id)
-        .options(
-            selectinload(Machinery.comments),  # Загружаем комментарии
-            selectinload(Machinery.docs),  # Загружаем документы
-            selectinload(Machinery.tasks),  # Загружаем задачи
-            # Если есть другие связанные таблицы, добавьте их здесь
-        )
+
+    machinery_updated = await get_machinery_by_id(
+        session=session, machinery_id=machinery.id
     )
-    result = await session.execute(stmt)
-    machinery = result.scalar_one_or_none()
-    if machinery is None:
+    if machinery_updated is None:
         return None
 
-    return machinery
+    return machinery_updated
+
+
+async def get_comment_by_id(
+    session: AsyncSession,
+    comment_id: int,
+) -> MachineryComment | None:
+    return await session.get(MachineryComment, comment_id)
 
 
 async def delete_machinery(
