@@ -1,8 +1,8 @@
-"""added subscribe table_2
+"""add category_id in problems
 
-Revision ID: 5ea6dcb60876
+Revision ID: 48cd35550ac5
 Revises: 
-Create Date: 2025-01-31 17:47:30.093654
+Create Date: 2025-02-04 18:12:34.548951
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "5ea6dcb60876"
+revision: str = "48cd35550ac5"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -40,6 +40,7 @@ def upgrade() -> None:
         "subscribers",
         sa.Column("chat_id", sa.Integer(), nullable=True),
         sa.Column("username", sa.String(), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_date", sa.BigInteger(), nullable=False),
         sa.Column("updated_date", sa.BigInteger(), nullable=False),
@@ -96,6 +97,8 @@ def upgrade() -> None:
         sa.Column("priority_id", sa.Integer(), nullable=False),
         sa.Column("photos", sa.JSON(), nullable=False),
         sa.Column("author_id", sa.Integer(), nullable=False),
+        sa.Column("category_id", sa.Integer(), nullable=False),
+        sa.Column("subcategory_id", sa.Integer(), nullable=True),
         sa.Column("machinery_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_date", sa.BigInteger(), nullable=False),

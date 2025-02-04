@@ -96,6 +96,8 @@ class ProblemBaseSchema(BaseModel):
     author_id: int
     machinery_id: int
     priority_id: int
+    category_id: int
+    subcategory_id: Optional[int] = 0
 
 
 class ProblemCreateSchema(ProblemBaseSchema):

@@ -1,4 +1,4 @@
-from sqlalchemy import String, JSON, ForeignKey
+from sqlalchemy import String, JSON, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from typing import Optional, List, TYPE_CHECKING
@@ -16,6 +16,8 @@ class MachineryProblem(Base):
     priority_id: Mapped[int]
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     author_id: Mapped[int]
+    category_id: Mapped[int]
+    subcategory_id: Mapped[Optional[int]] = mapped_column(Integer, default=0)
     machinery_id: Mapped[int] = mapped_column(ForeignKey("machinery.id"), nullable=True)
     machinery: Mapped["Machinery"] = relationship(
         "Machinery", back_populates="problems", lazy="selectin"
