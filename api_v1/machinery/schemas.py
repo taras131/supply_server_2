@@ -129,6 +129,14 @@ class MachineryBaseSchema(BaseModel):
     vin: Optional[str] = None
     state_number: Optional[str] = None
     status: str
+    engine_type_id: Optional[int] = None
+    traction_type_id: Optional[int] = None
+    transmission_type_id: Optional[int] = None
+    working_equipment: Optional[str] = None
+    engine_brand: Optional[str] = None
+    engine_model: Optional[str] = None
+    transmission_brand: Optional[str] = None
+    transmission_model: Optional[str] = None
 
 
 class MachineryCreateSchema(MachineryBaseSchema):

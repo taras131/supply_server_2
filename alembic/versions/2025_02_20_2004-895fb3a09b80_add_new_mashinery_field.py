@@ -1,8 +1,8 @@
-"""add category_id in problems
+"""add new mashinery field
 
-Revision ID: 48cd35550ac5
+Revision ID: 895fb3a09b80
 Revises: 
-Create Date: 2025-02-04 18:12:34.548951
+Create Date: 2025-02-20 20:04:39.837652
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "48cd35550ac5"
+revision: str = "895fb3a09b80"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,6 +31,14 @@ def upgrade() -> None:
         sa.Column("state_number", sa.String(length=32), nullable=True),
         sa.Column("status", sa.String(length=32), nullable=True),
         sa.Column("photos", sa.JSON(), nullable=False),
+        sa.Column("traction_type_id", sa.Integer(), nullable=True),
+        sa.Column("engine_type_id", sa.Integer(), nullable=True),
+        sa.Column("transmission_type_id", sa.Integer(), nullable=True),
+        sa.Column("working_equipment", sa.String(length=32), nullable=True),
+        sa.Column("engine_brand", sa.String(length=32), nullable=True),
+        sa.Column("engine_model", sa.String(length=32), nullable=True),
+        sa.Column("transmission_brand", sa.String(length=32), nullable=True),
+        sa.Column("transmission_model", sa.String(length=32), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_date", sa.BigInteger(), nullable=False),
         sa.Column("updated_date", sa.BigInteger(), nullable=False),

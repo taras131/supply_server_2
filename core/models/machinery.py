@@ -26,6 +26,14 @@ class Machinery(Base):
     state_number: Mapped[str] = mapped_column(String(32), nullable=True)
     status: Mapped[str] = mapped_column(String(32), nullable=True)
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
+    traction_type_id: Mapped[int] = mapped_column(nullable=True)
+    engine_type_id: Mapped[int] = mapped_column(nullable=True)
+    transmission_type_id: Mapped[int] = mapped_column(nullable=True)
+    working_equipment: Mapped[str] = mapped_column(String(32), nullable=True)
+    engine_brand: Mapped[str] = mapped_column(String(32), nullable=True)
+    engine_model: Mapped[str] = mapped_column(String(32), nullable=True)
+    transmission_brand: Mapped[str] = mapped_column(String(32), nullable=True)
+    transmission_model: Mapped[str] = mapped_column(String(32), nullable=True)
 
     def to_dict(self):
         return {
@@ -40,6 +48,14 @@ class Machinery(Base):
             "photos": self.photos,
             "created_date": self.created_date,
             "updated_date": self.updated_date,
+            "engine_type_id": self.engine_type_id,
+            "traction_type_id": self.traction_type_id,
+            "transmission_type_id": self.transmission_type_id,
+            "working_equipment": self.working_equipment,
+            "engine_brand": self.engine_brand,
+            "engine_model": self.engine_model,
+            "transmission_brand": self.transmission_brand,
+            "transmission_model": self.transmission_model,
         }
 
     comments: Mapped[List["MachineryComment"]] = relationship(

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
-import asyncio
+import asyncio, time
 import json
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import event
@@ -8,39 +8,52 @@ from core.websocket_utils import State, get_data_hash
 from .crud import get_machinery_list
 import hashlib
 
-
 state = State()
 
-
+"""
 @event.listens_for(MachineryComment, "after_update")
 def receive_comment_after_update(mapper, connection, target):
-    state.changed = True
+    asyncio.run_coroutine_threadsafe(state.notify_changed(), asyncio.get_event_loop())
 
 
 @event.listens_for(MachineryComment, "after_insert")
 def receive_comment_after_insert(mapper, connection, target):
-    state.changed = True
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    try:
+
+        async def notify():
+            await state.notify_changed()
+
+        future = asyncio.run_coroutine_threadsafe(notify(), loop)
+        future.result(timeout=2.0)  # Ждем результат не более 2 секунд
+        print(f"Уведомление о новой машине отправлено успешно: {target}")
+    except Exception as e:
+        print(f"Ошибка при отправке уведомления: {str(e)}")
 
 
 @event.listens_for(MachineryComment, "after_delete")
 def receive_comment_after_delete(mapper, connection, target):
-    state.changed = True
+    asyncio.run_coroutine_threadsafe(state.notify_changed(), asyncio.get_event_loop())
+"""
 
 
-# Регистрируем слушателей событий SQLAlchemy
 @event.listens_for(Machinery, "after_update")
-def receive_after_update(mapper, connection, target):
-    state.changed = True
+def receive_machinery_after_update(mapper, connection, target):
+    asyncio.create_task(state.notify_changed())
 
 
 @event.listens_for(Machinery, "after_insert")
-def receive_after_insert(mapper, connection, target):
-    state.changed = True
+def receive_machinery_after_insert(mapper, connection, target):
+    asyncio.create_task(state.notify_changed())
 
 
 @event.listens_for(Machinery, "after_delete")
-def receive_after_delete(mapper, connection, target):
-    state.changed = True
+def receive_machinery_after_delete(mapper, connection, target):
+    asyncio.create_task(state.notify_changed())
 
 
 router = APIRouter()
@@ -53,31 +66,28 @@ async def websocket_endpoint(
 ):
     try:
         await websocket.accept()
-
-        # Получаем начальные данные
+        print("WebSocket соединение установлено")
         machinery_list = await get_machinery_list(session)
         state.last_data = [machinery.to_dict() for machinery in machinery_list]
         await websocket.send_json(state.last_data)
 
         while True:
-            if state.changed:
+            try:
+                await asyncio.wait_for(state.changed_queue.get(), timeout=50)
+                await asyncio.sleep(0.5)
+
                 session.expire_all()
                 machinery_list = await get_machinery_list(session)
                 current_data = [machinery.to_dict() for machinery in machinery_list]
-                current_hash = get_data_hash(current_data)
-                last_hash = get_data_hash(state.last_data)
-                if current_hash != last_hash:
+
+                if get_data_hash(current_data) != get_data_hash(state.last_data):
                     state.last_data = current_data
                     await websocket.send_json(current_data)
-                state.changed = False
 
-            await asyncio.sleep(2)
+            except Exception as e:
+                print(f"Ошибка при обработке: {str(e)}")
+                await websocket.close()
+                break
 
     except WebSocketDisconnect:
-        print("Клиент отключился")
-    except Exception as e:
-        print(f"WebSocket ошибка: {e}")
-    """
-    finally:
-        await websocket.close()
-    """
+        print("WebSocket соединение закрыто клиентом")
