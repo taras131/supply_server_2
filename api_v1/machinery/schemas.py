@@ -132,11 +132,13 @@ class MachineryBaseSchema(BaseModel):
     engine_type_id: Optional[int] = None
     traction_type_id: Optional[int] = None
     transmission_type_id: Optional[int] = None
+    operating_type_id: Optional[int] = None
     working_equipment: Optional[str] = None
     engine_brand: Optional[str] = None
     engine_model: Optional[str] = None
     transmission_brand: Optional[str] = None
     transmission_model: Optional[str] = None
+    frame_number: Optional[str] = None
 
 
 class MachineryCreateSchema(MachineryBaseSchema):
@@ -154,20 +156,8 @@ class MachinerySchema(MachineryBaseSchema):
     tasks: List[TaskSchema]
 
 
-class MachineryCompleteSchema(BaseModel):
+class MachineryCompleteSchema(MachinerySchema):
     model_config = ConfigDict(from_attributes=True)
-    brand: str
-    model: str
-    year_manufacture: int
-    type_id: int
-    vin: Optional[str] = None
-    state_number: Optional[str] = None
-    status: str
-    id: int
-    created_date: int
-    updated_date: int
-    comments: List[MachineryCommentSchema]
-    photos: List[str]
     docs: List[DocsSchema]
     tasks: List[TaskSchema]
     problems: List[ProblemSchema]
