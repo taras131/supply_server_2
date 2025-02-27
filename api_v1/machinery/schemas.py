@@ -97,7 +97,8 @@ class ProblemBaseSchema(BaseModel):
     machinery_id: int
     priority_id: int
     category_id: int
-    subcategory_id: Optional[int] = 0
+    operating: int
+    status_id: int
 
 
 class ProblemCreateSchema(ProblemBaseSchema):

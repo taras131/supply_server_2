@@ -24,6 +24,7 @@ from .schemas import (
     TaskCreateSchema,
     TaskUpdateSchema,
     ProblemCreateSchema,
+    ProblemSchema,
 )
 
 
@@ -180,7 +181,6 @@ async def get_task_by_id(
     session: AsyncSession,
     task_id: int,
 ) -> MachineryTask | None:
-    # Создаем запрос с предварительной загрузкой всех связанных данных
     stmt = select(MachineryTask).where(MachineryTask.id == task_id)
     try:
         result = await session.execute(stmt)
@@ -188,6 +188,22 @@ async def get_task_by_id(
         if task is None:
             return None
         return task
+    except Exception as e:
+        print(f"Error fetching machinery: {str(e)}")
+        raise
+
+
+async def get_problem_by_id(
+    session: AsyncSession,
+    problem_id: int,
+) -> MachineryProblem | None:
+    stmt = select(MachineryProblem).where(MachineryProblem.id == problem_id)
+    try:
+        result = await session.execute(stmt)
+        problem = result.scalar_one_or_none()
+        if problem is None:
+            return None
+        return problem
     except Exception as e:
         print(f"Error fetching machinery: {str(e)}")
         raise
@@ -233,3 +249,15 @@ async def create_problem(
     except Exception as e:
         print(f"Error creating problem: {e}")
         raise e
+
+
+async def update_machinery_problem(
+    session: AsyncSession,
+    problem: MachineryProblem,
+    problem_update: ProblemSchema,
+) -> MachineryProblem:
+    for name, value in problem_update.model_dump().items():
+        setattr(problem, name, value)
+    await session.commit()
+    await session.refresh(problem)
+    return problem

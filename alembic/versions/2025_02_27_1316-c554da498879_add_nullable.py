@@ -1,8 +1,8 @@
-"""add new mashinery field
+"""add nullable
 
-Revision ID: 895fb3a09b80
+Revision ID: c554da498879
 Revises: 
-Create Date: 2025-02-20 20:04:39.837652
+Create Date: 2025-02-27 13:16:03.258798
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "895fb3a09b80"
+revision: str = "c554da498879"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,12 +33,14 @@ def upgrade() -> None:
         sa.Column("photos", sa.JSON(), nullable=False),
         sa.Column("traction_type_id", sa.Integer(), nullable=True),
         sa.Column("engine_type_id", sa.Integer(), nullable=True),
+        sa.Column("operating_type_id", sa.Integer(), nullable=True),
         sa.Column("transmission_type_id", sa.Integer(), nullable=True),
         sa.Column("working_equipment", sa.String(length=32), nullable=True),
         sa.Column("engine_brand", sa.String(length=32), nullable=True),
         sa.Column("engine_model", sa.String(length=32), nullable=True),
         sa.Column("transmission_brand", sa.String(length=32), nullable=True),
         sa.Column("transmission_model", sa.String(length=32), nullable=True),
+        sa.Column("frame_number", sa.String(length=32), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_date", sa.BigInteger(), nullable=False),
         sa.Column("updated_date", sa.BigInteger(), nullable=False),
@@ -106,7 +108,8 @@ def upgrade() -> None:
         sa.Column("photos", sa.JSON(), nullable=False),
         sa.Column("author_id", sa.Integer(), nullable=False),
         sa.Column("category_id", sa.Integer(), nullable=False),
-        sa.Column("subcategory_id", sa.Integer(), nullable=True),
+        sa.Column("status_id", sa.Integer(), nullable=False),
+        sa.Column("operating", sa.Integer(), nullable=False),
         sa.Column("machinery_id", sa.Integer(), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_date", sa.BigInteger(), nullable=False),

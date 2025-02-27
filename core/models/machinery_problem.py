@@ -17,7 +17,8 @@ class MachineryProblem(Base):
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     author_id: Mapped[int]
     category_id: Mapped[int]
-    subcategory_id: Mapped[Optional[int]] = mapped_column(Integer, default=0)
+    status_id: Mapped[int]
+    operating: Mapped[int]
     machinery_id: Mapped[int] = mapped_column(ForeignKey("machinery.id"), nullable=True)
     machinery: Mapped["Machinery"] = relationship(
         "Machinery", back_populates="problems", lazy="selectin"
@@ -39,6 +40,9 @@ class MachineryProblem(Base):
             "author_id": self.author_id,
             "machinery_id": self.machinery_id,
             "created_date": self.created_date,
+            "category_id": self.category_id,
             "updated_date": self.updated_date,
+            "status_id": self.status_id,
+            "operating": self.operating,
             "task": self.task.id if self.task else None,
         }

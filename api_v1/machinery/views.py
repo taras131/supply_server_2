@@ -1,7 +1,13 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.models import db_helper, Machinery, MachineryComment, MachineryTask
-from .dependecies import machinery_by_id, comment_by_id, task_by_id
+from core.models import (
+    db_helper,
+    Machinery,
+    MachineryComment,
+    MachineryTask,
+    MachineryProblem,
+)
+from .dependecies import machinery_by_id, comment_by_id, task_by_id, problem_by_id
 from .machinery_ws import router as ws_router
 from api_v1.bot.crud import get_subscribers
 from api_v1.bot.bot import send_telegram_message
@@ -163,3 +169,16 @@ async def create_problem(
                 print(f"Failed to send message to {subscriber.chat_id}: {str(e)}")
                 continue
     return problem
+
+
+@router.put("/problems/{problem_id}/", response_model=ProblemSchema)
+async def update_machinery_comment(
+    problem_update: ProblemSchema,
+    problem: MachineryProblem = Depends(problem_by_id),
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    return await crud.update_machinery_problem(
+        session=session,
+        problem=problem,
+        problem_update=problem_update,
+    )
