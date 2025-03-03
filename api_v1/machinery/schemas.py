@@ -57,6 +57,7 @@ class TaskBaseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: str
     description: str
+    type_id: int
     status_id: int
     priority_id: int
     due_date: int
@@ -64,6 +65,8 @@ class TaskBaseSchema(BaseModel):
     author_id: int
     assigned_to_id: int
     machinery_id: Optional[int]
+    operating: Optional[int] = None
+    odometer: Optional[int] = None
     problem_id: Optional[int] = None
 
 
@@ -97,8 +100,10 @@ class ProblemBaseSchema(BaseModel):
     machinery_id: int
     priority_id: int
     category_id: int
-    operating: int
     status_id: int
+    operating: Optional[int] = None
+    odometer: Optional[int] = None
+    task_id: Optional[int] = None
 
 
 class ProblemCreateSchema(ProblemBaseSchema):
@@ -110,7 +115,6 @@ class ProblemSchema(ProblemBaseSchema):
     id: int
     created_date: int
     updated_date: int
-    task_id: Optional[int] = None
 
 
 class ProblemUpdateSchema(ProblemSchema):

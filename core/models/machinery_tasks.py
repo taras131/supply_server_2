@@ -15,9 +15,12 @@ class MachineryTask(Base):
 
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(1024))
+    type_id: Mapped[int]
     status_id: Mapped[int]
     priority_id: Mapped[int]
     due_date: Mapped[int]
+    operating: Mapped[int] = mapped_column(nullable=True)
+    odometer: Mapped[int] = mapped_column(nullable=True)
     issue_photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     result_photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     result_description: Mapped[str] = mapped_column(String(1024), default="")
@@ -31,15 +34,13 @@ class MachineryTask(Base):
     problem_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("machinery_problem.id"), nullable=True
     )
-    problem: Mapped[Optional["MachineryProblem"]] = relationship(
-        "MachineryProblem", lazy="selectin"
-    )
 
     def to_dict(self):
         return {
             "id": self.id,
             "title": self.title,
             "description": self.description,
+            "type_id": self.type_id,
             "status_id": self.status_id,
             "priority_id": self.priority_id,
             "due_date": self.due_date,

@@ -1,8 +1,8 @@
-"""add nullable
+"""added type_id to problem_5
 
-Revision ID: c554da498879
+Revision ID: c0dd5daf8425
 Revises: 
-Create Date: 2025-02-27 13:16:03.258798
+Create Date: 2025-03-03 15:56:20.773958
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "c554da498879"
+revision: str = "c0dd5daf8425"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -44,6 +44,62 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("created_date", sa.BigInteger(), nullable=False),
         sa.Column("updated_date", sa.BigInteger(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "machinery_problem",
+        sa.Column("title", sa.String(length=128), nullable=False),
+        sa.Column("description", sa.String(length=1024), nullable=False),
+        sa.Column("priority_id", sa.Integer(), nullable=False),
+        sa.Column("photos", sa.JSON(), nullable=False),
+        sa.Column("author_id", sa.Integer(), nullable=False),
+        sa.Column("category_id", sa.Integer(), nullable=False),
+        sa.Column("status_id", sa.Integer(), nullable=False),
+        sa.Column("operating", sa.Integer(), nullable=True),
+        sa.Column("odometer", sa.Integer(), nullable=True),
+        sa.Column("machinery_id", sa.Integer(), nullable=True),
+        sa.Column("task_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("created_date", sa.BigInteger(), nullable=False),
+        sa.Column("updated_date", sa.BigInteger(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["machinery_id"],
+            ["machinery.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["task_id"],
+            ["machinery_tasks.id"],
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_table(
+        "machinery_tasks",
+        sa.Column("title", sa.String(length=128), nullable=False),
+        sa.Column("description", sa.String(length=1024), nullable=False),
+        sa.Column("status_id", sa.Integer(), nullable=False),
+        sa.Column("priority_id", sa.Integer(), nullable=False),
+        sa.Column("due_date", sa.Integer(), nullable=False),
+        sa.Column("operating", sa.Integer(), nullable=True),
+        sa.Column("odometer", sa.Integer(), nullable=True),
+        sa.Column("issue_photos", sa.JSON(), nullable=False),
+        sa.Column("result_photos", sa.JSON(), nullable=False),
+        sa.Column("result_description", sa.String(length=1024), nullable=False),
+        sa.Column("spent_resources", sa.String(length=1024), nullable=False),
+        sa.Column("author_id", sa.Integer(), nullable=False),
+        sa.Column("assigned_to_id", sa.Integer(), nullable=False),
+        sa.Column("machinery_id", sa.Integer(), nullable=True),
+        sa.Column("problem_id", sa.Integer(), nullable=True),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("created_date", sa.BigInteger(), nullable=False),
+        sa.Column("updated_date", sa.BigInteger(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["machinery_id"],
+            ["machinery.id"],
+        ),
+        sa.ForeignKeyConstraint(
+            ["problem_id"],
+            ["machinery_problem.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -100,64 +156,16 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_table(
-        "machinery_problem",
-        sa.Column("title", sa.String(length=128), nullable=False),
-        sa.Column("description", sa.String(length=1024), nullable=False),
-        sa.Column("priority_id", sa.Integer(), nullable=False),
-        sa.Column("photos", sa.JSON(), nullable=False),
-        sa.Column("author_id", sa.Integer(), nullable=False),
-        sa.Column("category_id", sa.Integer(), nullable=False),
-        sa.Column("status_id", sa.Integer(), nullable=False),
-        sa.Column("operating", sa.Integer(), nullable=False),
-        sa.Column("machinery_id", sa.Integer(), nullable=True),
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("created_date", sa.BigInteger(), nullable=False),
-        sa.Column("updated_date", sa.BigInteger(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["machinery_id"],
-            ["machinery.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
-    op.create_table(
-        "machinery_tasks",
-        sa.Column("title", sa.String(length=128), nullable=False),
-        sa.Column("description", sa.String(length=1024), nullable=False),
-        sa.Column("status_id", sa.Integer(), nullable=False),
-        sa.Column("priority_id", sa.Integer(), nullable=False),
-        sa.Column("due_date", sa.Integer(), nullable=False),
-        sa.Column("issue_photos", sa.JSON(), nullable=False),
-        sa.Column("result_photos", sa.JSON(), nullable=False),
-        sa.Column("result_description", sa.String(length=1024), nullable=False),
-        sa.Column("spent_resources", sa.String(length=1024), nullable=False),
-        sa.Column("author_id", sa.Integer(), nullable=False),
-        sa.Column("assigned_to_id", sa.Integer(), nullable=False),
-        sa.Column("machinery_id", sa.Integer(), nullable=True),
-        sa.Column("problem_id", sa.Integer(), nullable=True),
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("created_date", sa.BigInteger(), nullable=False),
-        sa.Column("updated_date", sa.BigInteger(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["machinery_id"],
-            ["machinery.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["problem_id"],
-            ["machinery_problem.id"],
-        ),
-        sa.PrimaryKeyConstraint("id"),
-    )
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_table("machinery_tasks")
-    op.drop_table("machinery_problem")
     op.drop_table("machinery_docs")
     op.drop_table("machinery_comment")
     op.drop_table("users")
     op.drop_table("subscribers")
+    op.drop_table("machinery_tasks")
+    op.drop_table("machinery_problem")
     op.drop_table("machinery")
     # ### end Alembic commands ###

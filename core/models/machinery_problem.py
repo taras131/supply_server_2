@@ -18,16 +18,14 @@ class MachineryProblem(Base):
     author_id: Mapped[int]
     category_id: Mapped[int]
     status_id: Mapped[int]
-    operating: Mapped[int]
+    operating: Mapped[int] = mapped_column(nullable=True)
+    odometer: Mapped[int] = mapped_column(nullable=True)
     machinery_id: Mapped[int] = mapped_column(ForeignKey("machinery.id"), nullable=True)
     machinery: Mapped["Machinery"] = relationship(
         "Machinery", back_populates="problems", lazy="selectin"
     )
-    task: Mapped[Optional["MachineryTask"]] = relationship(
-        "MachineryTask",
-        back_populates="problem",
-        lazy="selectin",  # или "joined"
-        uselist=False,
+    task_id: Mapped[int] = mapped_column(
+        ForeignKey("machinery_tasks.id"), nullable=True
     )
 
     def to_dict(self):
@@ -44,5 +42,6 @@ class MachineryProblem(Base):
             "updated_date": self.updated_date,
             "status_id": self.status_id,
             "operating": self.operating,
-            "task": self.task.id if self.task else None,
+            "odometer": self.odometer,
+            "task_id": self.task_id,
         }
