@@ -19,11 +19,13 @@ class MachineryTask(Base):
     status_id: Mapped[int]
     priority_id: Mapped[int]
     due_date: Mapped[int]
-    operating: Mapped[int] = mapped_column(nullable=True)
-    odometer: Mapped[int] = mapped_column(nullable=True)
+    issue_operating: Mapped[int] = mapped_column(nullable=True, default=0)
+    issue_odometer: Mapped[int] = mapped_column(nullable=True, default=0)
     issue_photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     result_photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     result_description: Mapped[str] = mapped_column(String(1024), default="")
+    result_operating: Mapped[int] = mapped_column(nullable=True, default=0)
+    result_odometer: Mapped[int] = mapped_column(nullable=True, default=0)
     spent_resources: Mapped[str] = mapped_column(String(1024), default="")
     author_id: Mapped[int]
     assigned_to_id: Mapped[int]
@@ -45,8 +47,12 @@ class MachineryTask(Base):
             "priority_id": self.priority_id,
             "due_date": self.due_date,
             "issue_photos": self.issue_photos,
+            "issue_operating": self.issue_operating,
+            "issue_odometer": self.issue_odometer,
             "result_photos": self.result_photos,
             "result_description": self.result_description,
+            "result_operating": self.result_operating,
+            "result_odometer": self.result_odometer,
             "spent_resources": self.spent_resources,
             "author_id": self.author_id,
             "assigned_to_id": self.assigned_to_id,

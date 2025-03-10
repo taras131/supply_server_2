@@ -3,10 +3,9 @@ from core.models import Base, db_helper
 from api_v1 import router as api_v1_router
 from core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
-from api_v1.bot.bot import handle_message, set_webhook
+from api_v1.bot.bot import set_webhook
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
-import httpx
+from fastapi import FastAPI
 
 
 @asynccontextmanager

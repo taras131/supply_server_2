@@ -65,8 +65,10 @@ class TaskBaseSchema(BaseModel):
     author_id: int
     assigned_to_id: int
     machinery_id: Optional[int]
-    operating: Optional[int] = None
-    odometer: Optional[int] = None
+    issue_operating: Optional[int] = None
+    issue_odometer: Optional[int] = None
+    result_odometer: Optional[int] = None
+    result_operating: Optional[int] = None
     problem_id: Optional[int] = None
 
 
@@ -103,7 +105,7 @@ class ProblemBaseSchema(BaseModel):
     status_id: int
     operating: Optional[int] = None
     odometer: Optional[int] = None
-    task_id: Optional[int] = None
+    tasks_id: List[int]
 
 
 class ProblemCreateSchema(ProblemBaseSchema):

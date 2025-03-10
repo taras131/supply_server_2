@@ -24,9 +24,7 @@ class MachineryProblem(Base):
     machinery: Mapped["Machinery"] = relationship(
         "Machinery", back_populates="problems", lazy="selectin"
     )
-    task_id: Mapped[int] = mapped_column(
-        ForeignKey("machinery_tasks.id"), nullable=True
-    )
+    tasks_id: Mapped[List[int]] = mapped_column(JSON, default=list)
 
     def to_dict(self):
         return {
@@ -43,5 +41,5 @@ class MachineryProblem(Base):
             "status_id": self.status_id,
             "operating": self.operating,
             "odometer": self.odometer,
-            "task_id": self.task_id,
+            "tasks_id": self.tasks_id,
         }
