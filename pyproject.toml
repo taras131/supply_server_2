@@ -15,6 +15,13 @@ sqlalchemy = {extras = ["asyncio"], version = "^2.0.36"}
 aiosqlite = "^0.20.0"
 pydantic-settings = "^2.7.1"
 alembic = "^1.14.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.20"
+email-validator = "^2.2.0"
+python-telegram-bot = "^21.10"
+httpx = "^0.28.1"
+aiogram = "^3.17.0"
 
 
 [build-system]
