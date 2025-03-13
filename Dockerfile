@@ -4,6 +4,9 @@ FROM python:3.12-slim
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
+COPY certificate.key /app/ssl/
+COPY certificate_ca /app/ssl/
+COPY certificate /app/ssl/
 # Устанавливаем системные инструменты
 RUN apt-get update && apt-get install -y build-essential
 
@@ -20,7 +23,8 @@ RUN poetry config virtualenvs.create false && poetry install --no-root --only ma
 COPY . .
 
 # Указываем порт приложения
-EXPOSE 8000
+EXPOSE 443
 
 # Указываем команду запуска
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Замените существующий CMD на:
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/ssl/certificate.key", "--ssl-certfile", "/app/ssl/certificate"]

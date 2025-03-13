@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "443:443"
+    volumes:
+      - ./ssl:/app/ssl
+    environment:
+      - SSL_KEYFILE=/app/ssl/certificate.key
+      - SSL_CERTFILE=/app/ssl/certificate
