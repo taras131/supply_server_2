@@ -4,9 +4,11 @@ FROM python:3.12-slim
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
+# Копируем сертификаты с корректными именами
 COPY ssl/certificate.key /ssl/
-COPY ssl/certificate_ca /ssl/
-COPY ssl/certificate /ssl/
+COPY ssl/certificate_ca.crt /ssl/
+COPY ssl/certificate.crt /ssl/
+
 # Устанавливаем системные инструменты
 RUN apt-get update && apt-get install -y build-essential
 
@@ -26,5 +28,5 @@ COPY . .
 EXPOSE 443
 
 # Указываем команду запуска
-# Замените существующий CMD на:
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/ssl/certificate.key", "--ssl-certfile", "/app/ssl/certificate"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/ssl/certificate.key", "--ssl-certfile", "/ssl/certificate.crt"]
+

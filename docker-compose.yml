@@ -8,4 +8,4 @@ services:
       - ./ssl:/ssl
     environment:
       - SSL_KEYFILE=/ssl/certificate.key
-      - SSL_CERTFILE=/ssl/certificate
+      - SSL_CERTFILE=/ssl/certificate.crt
