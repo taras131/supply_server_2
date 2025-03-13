@@ -5,7 +5,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ./ssl:/app/ssl
+      - ./ssl:/ssl
     environment:
-      - SSL_KEYFILE=/app/ssl/certificate.key
-      - SSL_CERTFILE=/app/ssl/certificate
+      - SSL_KEYFILE=/ssl/certificate.key
+      - SSL_CERTFILE=/ssl/certificate
