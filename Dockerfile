@@ -4,9 +4,9 @@ FROM python:3.12-slim
 # Устанавливаем рабочую директорию
 WORKDIR /app
 
-COPY certificate.key /app/ssl/
-COPY certificate_ca /app/ssl/
-COPY certificate /app/ssl/
+COPY certificate.key /ssl/
+COPY certificate_ca /ssl/
+COPY certificate /ssl/
 # Устанавливаем системные инструменты
 RUN apt-get update && apt-get install -y build-essential
 
