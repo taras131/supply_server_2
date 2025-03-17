@@ -10,9 +10,7 @@ class Settings(BaseSettings):
     db_url: str = f"sqlite+aiosqlite:///{BASE_DIR}/db.sqlite3"
     db_echo: bool = True
     BOT_TOKEN: str = "7588156307:AAH3JN6qVxxjyJ3y1lMeYmekGvG5P-eEFnQ"
-    WEBHOOK_URL: str = (
-        "https://aggressive-eligible-doctor-dimensional.trycloudflare.com"
-    )
+    WEBHOOK_URL: str = "https://mylittleserver.ru/api/v1/bot/webhook"
 
 
 settings = Settings()
