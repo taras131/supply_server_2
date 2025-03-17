@@ -1,11 +1,16 @@
+version: "3.9"
+
 services:
   web:
     build:
       context: .
     ports:
-      - "443:443"
+      - "443:443"  # Проброс порта HTTPS
     volumes:
-      - ./ssl:/ssl
+      - ./ssl:/ssl    # Монтируем сертификаты
+      - ./db.sqlite3:/app/db.sqlite3  # Монтируем базу данных SQLite
+      - ./uploaded_files:/app/uploaded_files  # Монтируем директорию для загруженных файлов
     environment:
-      - SSL_KEYFILE=/ssl/certificate.key
-      - SSL_CERTFILE=/ssl/certificate.crt
+      - SSL_KEYFILE=/ssl/certificate.key  # Путь к ключу сертификата
+      - SSL_CERTFILE=/ssl/certificate.crt  # Путь к сертификату
+    restart: always  # Автоматический перезапуск при сбоях
