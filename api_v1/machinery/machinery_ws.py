@@ -29,7 +29,7 @@ def receive_machinery_after_delete(mapper, connection, target):
 router = APIRouter()
 
 
-@router.websocket("/ws")
+@router.websocket("/wss")
 async def websocket_endpoint(
     websocket: WebSocket,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
