@@ -7,7 +7,7 @@ from core.models import (
     MachineryTask,
     MachineryProblem,
 )
-from .dependecies import machinery_by_id, comment_by_id, task_by_id, problem_by_id
+from .dependecies import machinery_by_id, comment_by_id, task_by_id
 from .machinery_ws import router as ws_router
 from api_v1.bot.crud import get_subscribers
 from api_v1.bot.bot import send_telegram_message
@@ -24,8 +24,6 @@ from .schemas import (
     TaskCreateSchema,
     TaskSchema,
     TaskUpdateSchema,
-    ProblemSchema,
-    ProblemCreateSchema,
 )
 
 router = APIRouter(tags=["Machinery"])
@@ -136,49 +134,4 @@ async def update_task(
         session=session,
         task=task,
         task_update=task_update,
-    )
-
-
-@router.post("/problems/", response_model=ProblemSchema)
-async def create_problem(
-    problem_in: ProblemCreateSchema,
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    problem = await crud.create_problem(session=session, problem_in=problem_in)
-    subscribers = await get_subscribers(session)
-    machinery = await crud.get_machinery_by_id(
-        session=session, machinery_id=problem.machinery_id
-    )
-    message_text = (
-        f"🔔 Новая проблема:\n"
-        f"Техника: {machinery.brand} {machinery.model}\n"
-        f"Гос номер: {machinery.state_number}\n"
-        f"Название: {problem.title}\n"
-        f"Описание: {problem.description}\n"
-        f"Приоритет: {problem.priority_id}\n"
-        f"ID техники: {problem.machinery_id}"
-    )
-    # Отправляем сообщение каждому активному подписчику
-    for subscriber in subscribers:
-        if subscriber.is_active:
-            try:
-                await send_telegram_message(
-                    chat_id=subscriber.chat_id, text=message_text
-                )
-            except Exception as e:
-                print(f"Failed to send message to {subscriber.chat_id}: {str(e)}")
-                continue
-    return problem
-
-
-@router.put("/problems/{problem_id}/", response_model=ProblemSchema)
-async def update_machinery_comment(
-    problem_update: ProblemSchema,
-    problem: MachineryProblem = Depends(problem_by_id),
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-):
-    return await crud.update_machinery_problem(
-        session=session,
-        problem=problem,
-        problem_update=problem_update,
     )

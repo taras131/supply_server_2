@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 
-SECRET_KEY = "ваш_секретный_ключ"  # В реальном проекте храните в переменных окружения
+SECRET_KEY = "ваш_секретный_ключ"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 20160
 

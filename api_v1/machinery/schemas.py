@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict
+from api_v1.problems.schemas import ProblemSchema
 from typing import Optional
 from typing import List
 
@@ -21,9 +22,9 @@ class MachineryCommentSchema(MachineryCommentBaseSchema):
     text: str
     is_active: bool
     author_id: int
-    machinery_id: int  # Обязательное поле
-    created_date: int  # Обязательное поле
-    updated_date: int  # Обязательное поле
+    machinery_id: int
+    created_date: int
+    updated_date: int
     rating: List[int]
 
 
@@ -88,42 +89,6 @@ class TaskSchema(TaskBaseSchema):
 
 class TaskUpdateSchema(TaskSchema):
     pass
-
-
-# problem
-
-
-class ProblemBaseSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    title: str
-    description: str
-    photos: List[str]
-    author_id: int
-    machinery_id: int
-    priority_id: int
-    category_id: int
-    status_id: int
-    operating: Optional[int] = None
-    odometer: Optional[int] = None
-    tasks_id: List[int]
-
-
-class ProblemCreateSchema(ProblemBaseSchema):
-    pass
-
-
-class ProblemSchema(ProblemBaseSchema):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    created_date: int
-    updated_date: int
-
-
-class ProblemUpdateSchema(ProblemSchema):
-    pass
-
-
-# machinery
 
 
 class MachineryBaseSchema(BaseModel):
