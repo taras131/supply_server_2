@@ -22,6 +22,19 @@ async def get_tasks(
     return await crud.get_all(session=session)
 
 
+@router.get("/{task_id}/", response_model=TaskSchema)
+async def get_task_by_id(
+    task_id: int,
+    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
+):
+    task = await crud.get_task_by_id(session, task_id)
+    if task is None:
+        raise HTTPException(
+            status_code=404, detail=f"Machinery with id {task} not found"
+        )
+    return task
+
+
 @router.post("/", response_model=TaskSchema)
 async def create_task(
     task_in: TaskCreateSchema,
