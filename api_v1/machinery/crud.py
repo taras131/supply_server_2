@@ -21,8 +21,6 @@ from .schemas import (
     MachineryCommentUpdateSchema,
     DocsCreateSchema,
     MachineryCompleteSchema,
-    TaskCreateSchema,
-    TaskUpdateSchema,
 )
 
 
@@ -173,46 +171,3 @@ async def create_doc(
     await session.commit()
     await session.refresh(doc)
     return doc
-
-
-async def get_task_by_id(
-    session: AsyncSession,
-    task_id: int,
-) -> MachineryTask | None:
-    stmt = select(MachineryTask).where(MachineryTask.id == task_id)
-    try:
-        result = await session.execute(stmt)
-        task = result.scalar_one_or_none()
-        if task is None:
-            return None
-        return task
-    except Exception as e:
-        print(f"Error fetching machinery: {str(e)}")
-        raise
-
-
-async def create_task(
-    session: AsyncSession,
-    task_in: TaskCreateSchema,
-) -> MachineryTask:
-    try:
-        task = MachineryTask(**task_in.model_dump())
-        session.add(task)
-        await session.commit()
-        await session.refresh(task)
-        return task
-    except Exception as e:
-        print(f"Error creating task: {e}")
-        raise e
-
-
-async def update_task(
-    session: AsyncSession,
-    task: MachineryTask,
-    task_update: TaskUpdateSchema,
-) -> MachineryTask:
-    for name, value in task_update.model_dump().items():
-        setattr(task, name, value)
-    await session.commit()
-    await session.refresh(task)
-    return task

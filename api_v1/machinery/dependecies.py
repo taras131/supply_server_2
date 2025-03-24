@@ -5,8 +5,6 @@ from core.models import (
     db_helper,
     Machinery,
     MachineryComment,
-    MachineryTask,
-    MachineryProblem,
 )
 from . import crud
 
@@ -31,13 +29,3 @@ async def comment_by_id(
     if comment is not None:
         return comment
     raise HTTPException(status_code=404, detail="Machinery not found")
-
-
-async def task_by_id(
-    task_id: Annotated[int, Path],
-    session: AsyncSession = Depends(db_helper.scoped_session_dependency),
-) -> MachineryTask:
-    task = await crud.get_task_by_id(session=session, task_id=task_id)
-    if task is not None:
-        return task
-    raise HTTPException(status_code=404, detail="Task not found")
