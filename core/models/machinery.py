@@ -79,7 +79,7 @@ class Machinery(Base):
         collection_class=list,
         cascade="all, delete-orphan",
     )
-    problems: Mapped[List["MachineryTask"]] = relationship(
+    problems: Mapped[List["MachineryProblem"]] = relationship(
         "MachineryProblem",
         back_populates="machinery",
         lazy="selectin",
