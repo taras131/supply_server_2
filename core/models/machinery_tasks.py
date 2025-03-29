@@ -15,7 +15,7 @@ class MachineryTask(Base):
 
     title: Mapped[str] = mapped_column(String(128))
     description: Mapped[str] = mapped_column(String(1024))
-    event_location: Mapped[str] = mapped_column(String(1024))
+    event_location: Mapped[str] = mapped_column(String(1024), default="")
     type_id: Mapped[int]
     status_id: Mapped[int]
     priority_id: Mapped[int]
@@ -43,7 +43,7 @@ class MachineryTask(Base):
             "id": self.id,
             "title": self.title,
             "description": self.description,
-            event_location: self.event_location,
+            "event_location": self.event_location,
             "type_id": self.type_id,
             "status_id": self.status_id,
             "priority_id": self.priority_id,
