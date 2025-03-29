@@ -20,25 +20,42 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Добавляем новый обязательный столбец
+    # Добавляем новый столбец `event_location_tmp` с нужными параметрами (nullable=False)
     op.add_column(
         "machinery_tasks",
         sa.Column(
-            "event_location", sa.String(length=1024), nullable=True
-        ),  # Добавляем поле как nullable
+            "event_location_tmp",
+            sa.String(length=1024),
+            nullable=False,
+            server_default="",
+        ),
     )
 
-    # Устанавливаем значение по умолчанию для существующих строк
-    op.execute("UPDATE machinery_tasks SET event_location = ''")
+    # Копируем данные из старого столбца в новый
+    op.execute(
+        "UPDATE machinery_tasks SET event_location_tmp = COALESCE(event_location, '')"
+    )
 
-    # После обновления всех строк делаем поле обязательным (nullable=False)
+    # Удаляем старый столбец
+    op.drop_column("machinery_tasks", "event_location")
+
+    # Переименовываем новый столбец в `event_location`
     op.alter_column(
         "machinery_tasks",
-        "event_location",
-        existing_type=sa.String(length=1024),
-        nullable=False,
+        "event_location_tmp",
+        new_column_name="event_location",
     )
 
 
 def downgrade() -> None:
-    op.drop_column("machinery_tasks", "event_location")
+    # Добавляем обратно старый столбец
+    op.add_column(
+        "machinery_tasks",
+        sa.Column("event_location", sa.String(length=1024), nullable=True),
+    )
+
+    # Копируем данные обратно
+    op.execute("UPDATE machinery_tasks SET event_location = event_location_tmp")
+
+    # Удаляем временный столбец
+    op.drop_column("machinery_tasks", "event_location_tmp")
