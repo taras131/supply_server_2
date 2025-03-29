@@ -7,6 +7,7 @@ class TaskBaseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: str
     description: str
+    event_location: Optional[str] = None
     type_id: int
     status_id: int
     priority_id: int
