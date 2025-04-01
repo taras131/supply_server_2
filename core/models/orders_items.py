@@ -25,7 +25,7 @@ class OrdersItems(Base):
     completionType: Mapped[str] = mapped_column(default="")
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     invoice_id: Mapped[int] = mapped_column(ForeignKey("invoice.id"), nullable=True)
-    invoice: Mapped["Invoices"] = relationship(
+    invoices: Mapped["Invoices"] = relationship(
         "Invoices", back_populates="orders_items", lazy="selectin"
     )
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), nullable=True)
