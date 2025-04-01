@@ -35,7 +35,7 @@ class Orders(Base):
     )
     orders_items: Mapped[List["OrdersItems"]] = relationship(
         "OrdersItems",
-        back_populates="orders",
+        back_populates="order",
         lazy="selectin",
         collection_class=list,
         cascade="all, delete-orphan",
