@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from .orders import Orders
     from .invoices import Invoices
+    from .shipments_invoices import shipments_invoices_association
 
 
 class OrdersItems(Base):

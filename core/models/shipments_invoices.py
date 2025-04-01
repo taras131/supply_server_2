@@ -1,7 +1,8 @@
 from sqlalchemy import Table, Column, ForeignKey
 from .base import Base
+from typing import TYPE_CHECKING, List
 
-# Ассоциативная таблица для связи "многие ко многим"
+
 shipments_invoices_association = Table(
     "shipments_invoices",
     Base.metadata,

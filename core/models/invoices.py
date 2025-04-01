@@ -2,13 +2,13 @@ from sqlalchemy import String, JSON, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from typing import Optional, List, TYPE_CHECKING
-from .shipments_invoices import shipments_invoices_association
 
 
 if TYPE_CHECKING:
     from . import Shipments
     from . import Suppliers
     from . import OrdersItems
+    from .shipments_invoices import shipments_invoices_association
 
 
 class Invoices(Base):
