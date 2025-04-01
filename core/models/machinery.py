@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class Machinery(Base):
     __tablename__ = "machinery"
 
-    old_id: Mapped[str] = mapped_column(default="")
+    old_id: Mapped[str] = mapped_column(default="", nullable=True)
     brand: Mapped[str] = mapped_column(String(32))
     model: Mapped[str] = mapped_column(String(32))
     year_manufacture: Mapped[int]

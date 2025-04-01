@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class Shipments(Base):
     __tablename__ = "shipments"
 
-    old_id: Mapped[str] = mapped_column(String(100), default="")
+    old_id: Mapped[str] = mapped_column(String(100), default="", nullable=True)
     author_id: Mapped[int] = mapped_column(nullable=True)
     is_received: Mapped[bool] = mapped_column(nullable=False)
     received_author_id: Mapped[int] = mapped_column(nullable=True)

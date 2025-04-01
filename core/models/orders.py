@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class Orders(Base):
     __tablename__ = "orders"
 
-    old_id: Mapped[str] = mapped_column(default="")
+    old_id: Mapped[str] = mapped_column(default="", nullable=True)
     author_id: Mapped[int] = mapped_column(nullable=True)
     title: Mapped[str]
     is_approved: Mapped[bool]

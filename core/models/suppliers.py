@@ -18,7 +18,7 @@ class Suppliers(Base):
 
     name: Mapped[str] = mapped_column(String(100))
     INN: Mapped[int] = mapped_column(nullable=True)
-    old_id: Mapped[str] = mapped_column(String(100), default="")
+    old_id: Mapped[str] = mapped_column(String(100), default="", nullable=True)
     city: Mapped[str] = mapped_column(String(32), default="")
     phone: Mapped[str] = mapped_column(String(32), default="")
     manager_email: Mapped[str] = mapped_column(String(64), default="")
