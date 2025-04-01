@@ -45,7 +45,9 @@ class Invoices(Base):
     )
     orders_items: Mapped[List["OrdersItems"]] = relationship(
         "OrdersItems",
-        secondary=shipments_invoices_association,  # Промежуточная таблица
+        secondary=shipments_invoices_association,
+        primaryjoin="Invoices.id == shipments_invoices_association.c.invoice_id",
+        secondaryjoin="OrdersItems.id == shipments_invoices_association.c.orders_item_id",
         back_populates="invoices",
         lazy="selectin",
     )
