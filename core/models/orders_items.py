@@ -26,7 +26,7 @@ class OrdersItems(Base):
     completionType: Mapped[str] = mapped_column(default="")
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     invoice_id: Mapped[int] = mapped_column(ForeignKey("invoice.id"), nullable=True)
-    invoices: Mapped[List["Invoices"]] = relationship(
+    invoice: Mapped[List["Invoices"]] = relationship(
         "Invoices",
         secondary=shipments_invoices_association,
         primaryjoin="OrdersItems.id == shipments_invoices_association.c.orders_item_id",
@@ -50,7 +50,7 @@ class OrdersItems(Base):
             "completionType": self.completionType,
             "photos": self.photos,
             "invoice_id": self.invoice_id,
-            "invoice": self.invoices,
+            "invoice": self.invoice,
             "created_date": self.created_date,
             "order_id": self.order_id,
             "order": self.order,

@@ -14,7 +14,7 @@ class OrdersItemsSchema(BaseModel):
     completionType: str
     photos: List[str]
     invoice_id: int
-    invoice: Optional[InvoicesSchema] = None
+    ##invoice: Optional[InvoicesSchema] = None
     order_id: int
 
 
