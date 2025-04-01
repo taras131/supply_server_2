@@ -1,6 +1,5 @@
 from .base import Base
 from sqlalchemy import String, JSON, ForeignKey
-from .shipments_invoices import shipments_invoices_association
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -12,8 +11,6 @@ from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from .orders import Orders
-    from .invoices import Invoices
-    from .shipments_invoices import shipments_invoices_association
 
 
 class OrdersItems(Base):
@@ -27,14 +24,6 @@ class OrdersItems(Base):
     completionType: Mapped[str] = mapped_column(default="")
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     invoice_id: Mapped[int] = mapped_column(ForeignKey("invoice.id"), nullable=True)
-    invoice: Mapped[List["Invoices"]] = relationship(
-        "Invoices",
-        secondary=shipments_invoices_association,
-        primaryjoin="OrdersItems.id == shipments_invoices_association.c.orders_item_id",
-        secondaryjoin="Invoices.id == shipments_invoices_association.c.invoice_id",
-        back_populates="orders_items",
-        lazy="selectin",
-    )
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"), nullable=True)
     order: Mapped["Orders"] = relationship(
         "Orders", back_populates="orders_items", lazy="selectin"
@@ -51,7 +40,6 @@ class OrdersItems(Base):
             "completionType": self.completionType,
             "photos": self.photos,
             "invoice_id": self.invoice_id,
-            "invoice": self.invoice,
             "created_date": self.created_date,
             "order_id": self.order_id,
             "order": self.order,

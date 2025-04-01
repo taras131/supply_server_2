@@ -8,7 +8,6 @@ if TYPE_CHECKING:
     from . import Shipments
     from . import Suppliers
     from . import OrdersItems
-    from .shipments_invoices import shipments_invoices_association
 
 
 class Invoices(Base):
@@ -35,22 +34,9 @@ class Invoices(Base):
     cancel_author_id: Mapped[int] = mapped_column(nullable=True)
     supplier_id: Mapped[int] = mapped_column(ForeignKey("suppliers.id"), nullable=True)
     supplier: Mapped["Suppliers"] = relationship(
-        "Suppliers", back_populates="invoices", lazy="selectin"
+        "Suppliers", back_populates="invoices", lazy="joined"
     )
-    shipments: Mapped[List["Shipments"]] = relationship(
-        "Shipments",
-        secondary=shipments_invoices_association,  # Промежуточная таблица
-        back_populates="invoices",
-        lazy="selectin",
-    )
-    orders_items: Mapped[List["OrdersItems"]] = relationship(
-        "OrdersItems",
-        secondary=shipments_invoices_association,
-        primaryjoin="Invoices.id == shipments_invoices_association.c.invoice_id",
-        secondaryjoin="OrdersItems.id == shipments_invoices_association.c.orders_item_id",
-        back_populates="invoice",
-        lazy="selectin",
-    )
+    shipments_id: Mapped[List[int]] = []
 
     def to_dict(self):
         return {
@@ -77,5 +63,4 @@ class Invoices(Base):
             "cancel_date": self.cancel_date,
             "cancel_author_id": self.cancel_author_id,
             "supplier": self.supplier,
-            "shipments": [shipment.to_dict() for shipment in self.shipments],
         }

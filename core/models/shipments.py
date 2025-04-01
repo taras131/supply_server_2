@@ -2,7 +2,6 @@ from sqlalchemy import String, JSON, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
 from typing import Optional, List, TYPE_CHECKING
-from .shipments_invoices import shipments_invoices_association
 
 if TYPE_CHECKING:
     from . import Invoices
@@ -22,12 +21,6 @@ class Shipments(Base):
     type: Mapped[str]
     photos: Mapped[List[int]] = mapped_column(JSON, default=list)
     invoices_id: Mapped[List[int]] = mapped_column(JSON, default=list)
-    invoices: Mapped[List["Invoices"]] = relationship(
-        "Invoices",
-        secondary=shipments_invoices_association,  # Промежуточная таблица
-        back_populates="shipments",
-        lazy="selectin",
-    )
 
     def to_dict(self):
         return {
@@ -45,5 +38,4 @@ class Shipments(Base):
             "type": self.type,
             "photos": self.photos,
             "invoices_id": self.invoices_id,
-            "invoices": [invoice.to_dict() for invoice in self.invoices],
         }

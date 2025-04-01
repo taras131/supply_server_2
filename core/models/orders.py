@@ -12,8 +12,6 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from .machinery import Machinery
     from .orders_items import OrdersItems
-    from .machinery_tasks import MachineryTask
-    from .machinery_problem import MachineryProblem
 
 
 class Orders(Base):
