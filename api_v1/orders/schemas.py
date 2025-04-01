@@ -32,6 +32,7 @@ class OrdersBaseSchema(BaseModel):
     comment: Optional[str] = None
     machinery_id: Optional[int] = None
     orders_items: List[OrdersItemsSchema]
+    completion_percentage: Optional[int] = None
 
 
 class OrdersCreateSchema(OrdersBaseSchema):
@@ -43,7 +44,6 @@ class OrdersSchema(OrdersBaseSchema):
     id: int
     created_date: int
     updated_date: int
-    completion_percentage: Optional[int] = None
 
 
 class OrdersUpdateSchema(OrdersSchema):
