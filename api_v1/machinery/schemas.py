@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from api_v1.problems.schemas import ProblemSchema
 from api_v1.tasks.schemas import TaskSchema
+from api_v1.orders.schemas import OrdersSchema
 from typing import Optional
 from typing import List
 
@@ -57,6 +58,7 @@ class DocsSchema(DocsBaseSchema):
 
 class MachineryBaseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
+    old_id: Optional[str] = None
     brand: str
     model: str
     year_manufacture: int
@@ -97,6 +99,7 @@ class MachineryCompleteSchema(MachinerySchema):
     docs: List[DocsSchema]
     tasks: List[TaskSchema]
     problems: List[ProblemSchema]
+    orders: List[OrdersSchema]
 
 
 class MachineryUpdateSchema(MachineryCompleteSchema):

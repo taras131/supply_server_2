@@ -24,12 +24,12 @@ async def get_supplier_by_id(
     supplier_id: int,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    task = await crud.get_supplier_by_id(session, supplier_id)
-    if task is None:
+    supplier = await crud.get_supplier_by_id(session, supplier_id)
+    if supplier is None:
         raise HTTPException(
             status_code=404, detail=f"Supplier with id {supplier_id} not found"
         )
-    return task
+    return supplier
 
 
 @router.post("/", response_model=SupplierSchema)
@@ -37,8 +37,8 @@ async def create_supplier(
     supplier_in: SupplierCreateSchema,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
 ):
-    problem = await crud.create_supplier(session=session, supplier_in=supplier_in)
-    return problem
+    supplier = await crud.create_supplier(session=session, supplier_in=supplier_in)
+    return supplier
 
 
 @router.put("/{supplier_id}/", response_model=SupplierSchema)

@@ -9,9 +9,13 @@ from sqlalchemy.orm import (
 )
 from typing import TYPE_CHECKING, List
 
+if TYPE_CHECKING:
+    from .invoices import Invoices
+
 
 class Suppliers(Base):
     __tablename__ = "suppliers"
+
     name: Mapped[str] = mapped_column(String(100))
     INN: Mapped[int] = mapped_column(nullable=True)
     old_id: Mapped[str] = mapped_column(String(100), default="")
@@ -29,6 +33,13 @@ class Suppliers(Base):
     okpo: Mapped[int] = mapped_column(nullable=True)
     okato: Mapped[int] = mapped_column(nullable=True)
     okogu: Mapped[int] = mapped_column(nullable=True)
+    invoices: Mapped[List["Invoices"]] = relationship(
+        "Invoices",
+        back_populates="supplier",
+        lazy="selectin",
+        collection_class=list,
+        cascade="all, delete-orphan",
+    )
 
     def to_dict(self):
         return {

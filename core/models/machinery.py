@@ -14,10 +14,13 @@ if TYPE_CHECKING:
     from .machinery_docs import MachineryDocs
     from .machinery_tasks import MachineryTask
     from .machinery_problem import MachineryProblem
+    from .orders import Orders
 
 
 class Machinery(Base):
     __tablename__ = "machinery"
+
+    old_id: Mapped[str] = mapped_column(default="")
     brand: Mapped[str] = mapped_column(String(32))
     model: Mapped[str] = mapped_column(String(32))
     year_manufacture: Mapped[int]
@@ -40,6 +43,7 @@ class Machinery(Base):
     def to_dict(self):
         return {
             "id": self.id,
+            "old_id": self.old_id,
             "brand": self.brand,
             "model": self.model,
             "year_manufacture": self.year_manufacture,
@@ -81,6 +85,13 @@ class Machinery(Base):
     )
     problems: Mapped[List["MachineryProblem"]] = relationship(
         "MachineryProblem",
+        back_populates="machinery",
+        lazy="selectin",
+        collection_class=list,
+        cascade="all, delete-orphan",
+    )
+    orders: Mapped[List["Orders"]] = relationship(
+        "Orders",
         back_populates="machinery",
         lazy="selectin",
         collection_class=list,
