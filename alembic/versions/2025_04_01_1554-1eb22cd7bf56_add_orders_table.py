@@ -22,8 +22,12 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     # Добавляем новые колонки
     op.add_column("invoice", sa.Column("is_full_shipment", sa.Boolean(), nullable=True))
-    op.add_column("machinery", sa.Column("old_id", sa.String(), nullable=False, server_default=""))
-    op.add_column("orders", sa.Column("old_id", sa.String(), nullable=False, server_default=""))
+    op.add_column(
+        "machinery", sa.Column("old_id", sa.String(), nullable=False, server_default="")
+    )
+    op.add_column(
+        "orders", sa.Column("old_id", sa.String(), nullable=False, server_default="")
+    )
     op.add_column("shipments", sa.Column("photos", sa.JSON(), nullable=False))
 
     # Используем batch mode для изменения foreign key в таблице orders_items
