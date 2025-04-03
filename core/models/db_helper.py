@@ -34,9 +34,8 @@ class DatabaseHelper:
             await session.close()
 
     async def scoped_session_dependency(self) -> AsyncSession:
-        session = self.get_scoped_session()
-        yield session
-        await session.close()
+        async with self.session_factory() as session:
+            yield session
 
 
 db_helper = DatabaseHelper(
