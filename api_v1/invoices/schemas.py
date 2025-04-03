@@ -37,7 +37,7 @@ class InvoicesSchema(InvoicesBaseSchema):
     id: int
     created_date: int
     updated_date: int
-    supplier: List[SupplierSchema]
+    supplier: SupplierSchema
 
 
 class InvoicesUpdateSchema(InvoicesSchema):
