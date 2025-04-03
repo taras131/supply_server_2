@@ -31,11 +31,11 @@ class Invoices(Base):
     is_cancel: Mapped[bool]
     cancel_date: Mapped[int] = mapped_column(nullable=True)
     cancel_author_id: Mapped[int] = mapped_column(nullable=True)
-    supplier_id: Mapped[int] = mapped_column(ForeignKey("suppliers.id"), nullable=True)
+    shipments_id: Mapped[List[int]] = mapped_column(JSON, default=[])
+    supplier_id: Mapped[int] = mapped_column(ForeignKey("suppliers.id"))
     supplier: Mapped["Suppliers"] = relationship(
         "Suppliers", back_populates="invoices", lazy="joined"
     )
-    shipments_id: Mapped[List[int]] = []
 
     def to_dict(self):
         return {
@@ -60,5 +60,4 @@ class Invoices(Base):
             "is_cancel": self.is_cancel,
             "cancel_date": self.cancel_date,
             "cancel_author_id": self.cancel_author_id,
-            "supplier": self.supplier,
         }
