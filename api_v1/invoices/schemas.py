@@ -19,7 +19,6 @@ class InvoicesBaseSchema(BaseModel):
     amount: int
     is_with_vat: bool
     request_id: Optional[int] = None
-    shipment_id: Optional[int] = None
     is_full_shipment: bool
     invoice_patch: str
     is_cancel: bool
