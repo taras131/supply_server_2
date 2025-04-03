@@ -26,6 +26,7 @@ class InvoicesBaseSchema(BaseModel):
     cancel_date: Optional[int] = None
     cancel_author_id: Optional[int] = None
     supplier_id: int
+    created_date: Optional[int] = None
 
 
 class InvoicesCreateSchema(InvoicesBaseSchema):
