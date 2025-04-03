@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.orm import selectinload
-from .schemas import InvoicesCreateSchema, InvoicesUpdateSchema
+from .schemas import InvoicesCreateSchema, InvoicesUpdateSchema, InvoicesSchema
 from core.models import Invoices
 
 
@@ -38,9 +38,16 @@ async def get_by_id(
     session: AsyncSession,
     invoice_id: int,
 ) -> Invoices | None:
-    stmt = select(Invoices).where(Invoices.id == invoice_id)
+    stmt = (
+        select(Invoices)
+        .where(Invoices.id == invoice_id)
+        .options(
+            selectinload(Invoices.supplier),
+        )
+    )
     try:
         result = await session.execute(stmt)
+
         invoice = result.scalar_one_or_none()
         if invoice is None:
             return None
