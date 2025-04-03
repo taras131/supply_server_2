@@ -26,7 +26,6 @@ class Invoices(Base):
     amount: Mapped[int]
     is_with_vat: Mapped[bool]
     request_id: Mapped[int] = mapped_column(nullable=True)
-    shipment_id: Mapped[int] = mapped_column(nullable=True)
     is_full_shipment: Mapped[bool] = mapped_column(nullable=True)
     invoice_patch: Mapped[str] = mapped_column(String(1024))
     is_cancel: Mapped[bool]
@@ -56,7 +55,6 @@ class Invoices(Base):
             "amount": self.amount,
             "is_with_vat": self.is_with_vat,
             "request_id": self.request_id,
-            "shipment_id": self.shipment_id,
             "supplier_id": self.supplier_id,
             "invoice_patch": self.invoice_patch,
             "is_cancel": self.is_cancel,

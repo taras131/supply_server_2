@@ -7,9 +7,9 @@ from api_v1.suppliers.schemas import SupplierSchema
 class InvoicesBaseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     old_id: Optional[str] = None
-    author_id: Optional[str] = None
+    author_id: Optional[int] = None
     is_approved: bool
-    approved_author_id: Optional[str] = None
+    approved_author_id: Optional[int] = None
     approved_date: Optional[int] = None
     is_paid: bool
     paid_author_id: Optional[int] = None
